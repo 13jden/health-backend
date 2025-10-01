@@ -1,10 +1,11 @@
-package com.dzk.web.api.user;
+package com.dzk.wx.api.user;
 
-import com.dzk.common.redis.RedisComponent;
-import com.dzk.web.utils.JwtUtil;
+import com.dzk.wx.redis.RedisComponent;
+import com.dzk.wx.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("user")
@@ -19,7 +20,6 @@ public class UserController {
     @Autowired
     private RedisComponent redisComponent;
 
-    @Value("${upload.avatar}")
-    private String avatarPath;
+
 
 }

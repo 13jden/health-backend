@@ -1,4 +1,4 @@
-package com.dzk.web.swagger;
+package com.dzk.wx.swagger;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Configuration;
 
 @OpenAPIDefinition(
         info = @Info(
-                title = "Travel API Doc",
-                description = "智慧旅游API文档",
+                title = "Health API Doc",
+                description = "医院API文档",
                 version = "0.1",
                 contact = @Contact(name = "dzk", email = "ma-nbi@11.com")
         ),

@@ -1,20 +1,15 @@
-package com.dzk.web.api.auth.captcha;
+package com.dzk.wx.api.auth.captcha;
 
-
-import java.awt.Font;
-import java.util.Objects;
 
 import com.dzk.common.exception.BusinessException;
-import com.wf.captcha.ArithmeticCaptcha;
-import com.wf.captcha.ChineseCaptcha;
-import com.wf.captcha.ChineseGifCaptcha;
-import com.wf.captcha.GifCaptcha;
-import com.wf.captcha.SpecCaptcha;
+import com.wf.captcha.*;
 import com.wf.captcha.base.Captcha;
+import io.micrometer.common.util.StringUtils;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
-
 import org.springframework.context.annotation.Configuration;
+
+import java.awt.*;
+import java.util.Objects;
 
 @Data
 @Configuration

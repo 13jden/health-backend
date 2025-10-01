@@ -1,4 +1,4 @@
-package com.dzk.web.api.auth.captcha;
+package com.dzk.wx.api.auth.captcha;
 
 
 public enum CaptchaCodeType {

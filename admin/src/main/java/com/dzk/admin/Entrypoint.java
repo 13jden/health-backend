@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableScheduling
 @EnableAsync
 @ComponentScan(basePackages = {"com.dzk.common", "com.dzk.admin", "com.dzk.wx"})
-@MapperScan({"com.dzk.admin.api", "com.dzk.web"})
+@MapperScan({"com.dzk.admin.api", "com.dzk.wx"})
 public class Entrypoint {
 
 	public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package com.dzk.web.utils;
+package com.dzk.wx.utils;
 
 import org.apache.commons.codec.digest.DigestUtils;
 

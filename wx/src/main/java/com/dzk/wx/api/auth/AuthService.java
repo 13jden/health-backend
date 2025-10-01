@@ -1,29 +1,26 @@
-package com.dzk.web.api.auth;
+package com.dzk.wx.api.auth;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.dzk.common.common.Result;
 import com.dzk.common.constants.Constants;
 import com.dzk.common.exception.BusinessException;
 import com.dzk.common.exception.ValidationException;
-import com.dzk.web.api.auth.captcha.CaptchaCodeType;
-import com.dzk.web.api.auth.captcha.CaptchaProvider;
-import com.dzk.web.api.user.User;
-import com.dzk.web.api.user.UserService;
-import com.dzk.web.utils.JwtUtil;
+import com.dzk.wx.api.auth.captcha.CaptchaCodeType;
+import com.dzk.wx.api.auth.captcha.CaptchaDto;
+import com.dzk.wx.api.auth.captcha.CaptchaProvider;
+import com.dzk.wx.api.user.User;
+import com.dzk.wx.api.user.UserService;
+import com.dzk.wx.redis.RedisComponent;
+import com.dzk.wx.utils.JwtUtil;
 import com.wf.captcha.base.Captcha;
-
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-
-import com.dzk.web.api.auth.captcha.CaptchaDto;
-import org.springframework.stereotype.Service;
-
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
 import java.util.Collections;
+import java.util.UUID;
 
 @Service
 public class AuthService {
@@ -35,7 +32,7 @@ public class AuthService {
     private UserService userService;
 
     @Autowired
-    private com.dzk.common.redis.RedisComponent redisComponent;
+    private RedisComponent redisComponent;
 
     @Autowired
     private JwtUtil jwtUtil;

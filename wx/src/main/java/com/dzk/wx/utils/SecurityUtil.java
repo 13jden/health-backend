@@ -1,6 +1,6 @@
-package com.dzk.web.utils;
+package com.dzk.wx.utils;
 
-import com.dzk.web.api.user.User;
+import com.dzk.wx.api.user.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

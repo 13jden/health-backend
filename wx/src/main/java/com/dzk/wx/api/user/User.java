@@ -1,4 +1,4 @@
-package com.dzk.web.api.user;
+package com.dzk.wx.api.user;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -37,8 +37,6 @@ public class User extends BaseEntity {
   @Schema(description = "角色")
   private RoleEnum role;
 
-  @Schema(description = "用户语言习惯")
-  private Language language;
 
   public enum Language {
     ZH_CN,

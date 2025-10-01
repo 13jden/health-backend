@@ -1,4 +1,4 @@
-package com.dzk.web.api.user;
+package com.dzk.wx.api.user;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;

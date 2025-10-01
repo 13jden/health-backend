@@ -1,7 +1,7 @@
-package com.dzk.web.api.user;
+package com.dzk.wx.api.user;
 
 import com.dzk.common.constants.Constants;
-import com.dzk.common.redis.RedisComponent;
+import com.dzk.wx.redis.RedisComponent;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;

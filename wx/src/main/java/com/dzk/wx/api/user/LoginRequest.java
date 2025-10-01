@@ -1,4 +1,4 @@
-package com.dzk.web.api.user;
+package com.dzk.wx.api.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

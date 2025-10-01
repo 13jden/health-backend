@@ -1,4 +1,4 @@
-package com.dzk.web.api.user;
+package com.dzk.wx.api.user;
 
 import org.springframework.stereotype.Component;
 
@@ -19,7 +19,6 @@ public class UserConverter {
         userDto.setOpenId(user.getOpenId());
         userDto.setAvatar(user.getAvatar());
         userDto.setRole(user.getRole());
-        userDto.setLanguage(user.getLanguage());
         return userDto;
     }
     
@@ -36,7 +35,6 @@ public class UserConverter {
         user.setOpenId(input.getOpenId());
         user.setAvatar(input.getAvatar());
         user.setRole(input.getRole());
-        user.setLanguage(input.getLanguage());
         return user;
     }
 } 

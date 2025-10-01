@@ -1,7 +1,7 @@
-package com.dzk.web.api.auth;
+package com.dzk.wx.api.auth;
 
-import com.dzk.web.api.user.RoleEnum;
-import com.dzk.web.api.user.User;
+import com.dzk.wx.api.user.RoleEnum;
+import com.dzk.wx.api.user.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,17 +1,14 @@
-package com.dzk.web.api.auth;
+package com.dzk.wx.api.auth;
 
 import com.dzk.common.common.Result;
-import com.dzk.common.exception.BusinessException;
-import com.dzk.web.api.auth.captcha.CaptchaDto;
+import com.dzk.wx.api.auth.captcha.CaptchaDto;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import io.swagger.v3.oas.annotations.Operation;
 
-
-
-@RestController 
+@RestController
 @RequestMapping("/api/auth")
 @Tag(name = "AuthController", description = "认证控制器")
 public class AuthController {

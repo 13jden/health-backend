@@ -1,4 +1,4 @@
-package com.dzk.web.api.user;
+package com.dzk.wx.api.user;
 
 public enum RoleEnum {
     ADMIN,
