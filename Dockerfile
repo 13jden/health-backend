@@ -10,7 +10,7 @@ ENV TZ=Asia/Shanghai
 # 复制 Maven 配置文件
 COPY pom.xml .
 COPY common/pom.xml common/
-COPY web/pom.xml web/
+COPY wx/pom.xml wx/
 COPY admin/pom.xml admin/
 
 # 下载依赖（先下载依赖以利用 Docker 缓存）
@@ -18,7 +18,7 @@ RUN mvn dependency:go-offline -B
 
 # 复制源代码
 COPY common/src common/src
-COPY web/src web/src
+COPY wx/src wx/src
 COPY admin/src admin/src
 
 # 构建应用 - 修复：明确指定要构建的模块
