@@ -23,7 +23,7 @@ jobs:
         run: mvn dependency:purge-local-repository -DmanualInclude="com.dzk:travel"
 
       - name: Build with Maven
-        run: mvn clean package -pl travel-admin -am -DskipTests
+        run: mvn clean package -pl admin -am -DskipTests
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -78,7 +78,7 @@ jobs:
               git pull origin master
             else
               git clone git@github.com:13jden/health-backend.git /opt/health-bankend
-              cd /opt/travel-bankend
+              cd /opt/health-bankend
             fi
 
             # 登录阿里云 ACR
