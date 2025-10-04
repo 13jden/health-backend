@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   health-app:
-    image: registry.cn-hangzhou.aliyuncs.com/dzkdzk/health-backend:latest
+    image: crpi-aer4k3m8uw2sue3f.cn-hangzhou.personal.cr.aliyuncs.com/dzkdzk/health:latest
     container_name: health-spring-app
     restart: unless-stopped
     ports:
