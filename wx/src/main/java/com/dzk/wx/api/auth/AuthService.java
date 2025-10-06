@@ -7,10 +7,12 @@ import com.dzk.common.exception.ValidationException;
 import com.dzk.wx.api.auth.captcha.CaptchaCodeType;
 import com.dzk.wx.api.auth.captcha.CaptchaDto;
 import com.dzk.wx.api.auth.captcha.CaptchaProvider;
+import com.dzk.wx.api.user.TokenUserDto;
 import com.dzk.wx.api.user.User;
 import com.dzk.wx.api.user.UserService;
 import com.dzk.wx.redis.RedisComponent;
 import com.dzk.wx.utils.JwtUtil;
+import com.dzk.wx.utils.WxLoginTool;
 import com.wf.captcha.base.Captcha;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,11 +39,14 @@ public class AuthService {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private WxLoginTool wxLoginTool;
+
     @Value("${app.captcha-enabled:true}")
 	private boolean captchaEnabled;
 
 
-    TokenUserDto login(LoginRequest request) throws Exception {
+    TokenUserDto adminLogin(LoginRequest request) throws Exception {
         if(captchaEnabled){
             String code = redisComponent.getCheckCode(request.getUuid());
             if (code==null){
@@ -75,6 +80,27 @@ public class AuthService {
         TokenUserDto tokenUserDto = new TokenUserDto().toTokenUserDto(user, token);
         redisComponent.saveUserToken(Constants.REDIS_KEY_TOKEN_WEB+token, tokenUserDto);
         
+        return tokenUserDto;
+    }
+
+    TokenUserDto wxLogin(LoginRequest request) throws Exception {
+        String code = request.getOpenCode();
+        String open_id = wxLoginTool.wxLogin(code);
+        User user = userService.getUserByOpenId(open_id);
+        String token= jwtUtil.generateToken(user.getUsername());
+        // 存储用户信息到Spring Security上下文
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(
+                        user,  // 存储完整的用户对象
+                        null,  // 密码设为null
+                        Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name()))
+                );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // 存储到Redis
+        TokenUserDto tokenUserDto = new TokenUserDto().toTokenUserDto(user, token);
+        redisComponent.saveUserToken(Constants.REDIS_KEY_TOKEN_WEB+token, tokenUserDto);
+
         return tokenUserDto;
     }
 

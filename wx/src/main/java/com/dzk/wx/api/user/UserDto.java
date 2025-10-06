@@ -28,25 +28,37 @@ public class UserDto {
     @Schema(description = "用户权限信息")
     private String authorities;
 
-    @Schema(description = "用户语言习惯")
-    private User.Language language;
+    @Schema(description = "部门")
+    private String department;
+
+    @Schema(description = "邮箱")
+    private String email;
 
     @Data
     @Schema(description = "用户输入数据传输对象")
     public static class Input {
         @Schema(description = "用户名")
         private String username;
+
+        @Schema(description = "密码")
+        private String password;
+
+        @Schema(description = "电话号码")
+        private String phone;
         
         @Schema(description = "用户头像")
         private String avatar;
 
-        @Schema(description = "用户语言习惯")
-        private User.Language language;
+        @Schema(description = "部门")
+        private String department;
+
+        @Schema(description = "邮箱")
+        private String email;
 
         @Schema(description = "用户角色")
         private RoleEnum role;
 
-        @Schema(description = "微信openId")
-        private String openId;
+        @Schema(description = "微信获取openId的code")
+        private String code;
     }
 }

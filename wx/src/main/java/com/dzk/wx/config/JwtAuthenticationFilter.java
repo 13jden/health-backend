@@ -1,9 +1,9 @@
-package com.dzk.web.config;
+package com.dzk.wx.config;
 
 import com.dzk.common.constants.Constants;
-import com.dzk.web.api.user.User;
-import com.dzk.web.api.auth.TokenUserDto;
-import com.dzk.web.redis.RedisComponent;
+import com.dzk.wx.api.user.TokenUserDto;
+import com.dzk.wx.api.user.User;
+import com.dzk.wx.redis.RedisComponent;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.MACVerifier;
@@ -48,16 +48,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     User user = new User();
                     user.setId(tokenUserDto.getId());
                     user.setUsername(tokenUserDto.getUsername());
-                    user.setNickname(tokenUserDto.getNickname());
                     user.setAvatar(tokenUserDto.getAvatar());
-                    // 设置其他需要的用户属性
-                    
                     // 创建认证对象，存储完整的用户信息
                     UsernamePasswordAuthenticationToken authentication = 
                         new UsernamePasswordAuthenticationToken(
                             user,  // 存储完整的用户对象
                             null,  // 密码设为null
-                            Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+                            Collections.singletonList(new SimpleGrantedAuthority(tokenUserDto.getRole().toString()))
                         );
                     
                     SecurityContextHolder.getContext().setAuthentication(authentication);

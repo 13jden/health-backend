@@ -1,4 +1,4 @@
-package com.dzk.wx.api.auth;
+package com.dzk.wx.api.user;
 
 import com.dzk.wx.api.user.RoleEnum;
 import com.dzk.wx.api.user.User;
@@ -44,7 +44,6 @@ public class TokenUserDto {
             .username(user.getUsername())
             .password(user.getPassword())
             .role(user.getRole())
-            .nickname(user.getNickname())
             .avatar(user.getAvatar())
             .phone(user.getPhone())
             .token(token)

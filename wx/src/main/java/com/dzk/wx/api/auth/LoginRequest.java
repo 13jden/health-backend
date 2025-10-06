@@ -20,4 +20,15 @@ public class LoginRequest {
 
     @Schema(description = "验证码ID")
     private String uuid;
+
+    @Schema(description = "openid获取code")
+    private String openCode;
+
+    @Schema(description = "登录类型")
+    private LoginType loginType;
+
+    public enum LoginType {
+        ADMIN,
+        WX
+    }
 }

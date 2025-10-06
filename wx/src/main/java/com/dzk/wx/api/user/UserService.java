@@ -1,7 +1,9 @@
 package com.dzk.wx.api.user;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.dzk.common.exception.BusinessException;
 import com.dzk.wx.redis.RedisComponent;
+import com.dzk.wx.utils.WxLoginTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,13 +16,13 @@ public class UserService  extends ServiceImpl<UserMapper, User> {
     
     @Autowired
     private UserConverter userConverter;
+
+    @Autowired
+    private WxLoginTool wxLoginTool;
     
     @Autowired
     private RedisComponent redisComponent;
 
-    public User getUserByOpenId(String openId) {
-        return userMapper.getUserByOpenId(openId);
-    }
     
     public User saveUser(User user) {
         int result = userMapper.insert(user);
@@ -31,38 +33,21 @@ public class UserService  extends ServiceImpl<UserMapper, User> {
         return userMapper.getUserByUsername(username);
     }
 
-    public UserDto login(String username, String password, String checkCode, String captchaKey) {
-        // 验证验证码
-        if (!validateCheckCode(captchaKey, checkCode)) {
-            throw new RuntimeException("验证码错误");
+
+    public User getUserByOpenId(String openId){
+        User user = userMapper.getUserByOpenId(openId);
+        if(user==null){
+            throw new BusinessException("用户不存在");
         }
-        
-        // 根据用户名查询用户
-        User user = userMapper.getUserByUsername(username);
-        
-//        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
-//            return userConverter.toDto(user);
-//        }
-        
-        return null;
+        return user;
     }
-    
-    /**
-     * 验证验证码
-     */
-    private boolean validateCheckCode(String captchaKey, String checkCode) {
-        if (checkCode == null || checkCode.trim().isEmpty() || captchaKey == null || captchaKey.trim().isEmpty()) {
-            return false;
-        }
-        
-        // 从Redis中获取验证码进行验证
-        String storedCode = redisComponent.getCheckCode(captchaKey);
-        if (storedCode != null && storedCode.equalsIgnoreCase(checkCode)) {
-            // 验证成功后删除验证码
-            redisComponent.cleanCheckCode(captchaKey);
-            return true;
-        }
-        
-        return false;
+
+    public String register(UserDto.Input input){
+        User user = userConverter.toEntity(input);
+        String openId = wxLoginTool.wxLogin(input.getCode());
+        user.setRole(RoleEnum.USER);
+        user.setOpenId(openId);
+        userMapper.insert(user);
+        return "注册成功！";
     }
 }

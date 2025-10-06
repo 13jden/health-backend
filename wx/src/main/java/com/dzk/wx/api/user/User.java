@@ -25,11 +25,14 @@ public class User extends BaseEntity {
   @Schema(description = "头像")
   private String avatar;
 
-  @Schema(description = "昵称")
-  private String nickname;
-
   @Schema(description = "电话号码")
   private String phone;
+
+  @Schema(description = "部门")
+  private String department;
+
+  @Schema(description = "邮箱")
+  private String email;
 
   @Schema(description = "密码")
   private String password;
@@ -37,10 +40,5 @@ public class User extends BaseEntity {
   @Schema(description = "角色")
   private RoleEnum role;
 
-
-  public enum Language {
-    ZH_CN,
-    EN_US
-  }
 
 }

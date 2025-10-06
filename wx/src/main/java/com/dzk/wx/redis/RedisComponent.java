@@ -1,7 +1,7 @@
 package com.dzk.wx.redis;
 
 import com.dzk.common.constants.Constants;
-import com.dzk.wx.api.auth.TokenUserDto;
+import com.dzk.wx.api.user.TokenUserDto;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 

@@ -2,6 +2,7 @@ package com.dzk.wx.api.auth;
 
 import com.dzk.common.common.Result;
 import com.dzk.wx.api.auth.captcha.CaptchaDto;
+import com.dzk.wx.api.user.TokenUserDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,11 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(summary = "登录", description = "登录", operationId = "Login")
     public Result<TokenUserDto> login(@RequestBody LoginRequest request) throws Exception {
-        return Result.success(authService.login(request));
+        if(request.getLoginType()==LoginRequest.LoginType.ADMIN){
+            return Result.success(authService.adminLogin(request));
+        }else{
+            return Result.success(authService.wxLogin(request));
+        }
     }
 
     @GetMapping("/code")

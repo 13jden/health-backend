@@ -1,4 +1,4 @@
-package com.dzk.web.config;
+package com.dzk.wx.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;

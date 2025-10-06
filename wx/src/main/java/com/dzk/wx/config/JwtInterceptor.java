@@ -1,7 +1,7 @@
-package com.dzk.web.config;
+package com.dzk.wx.config;
 
-import com.dzk.web.redis.RedisComponent;
-import com.dzk.web.utils.JwtUtil;
+import com.dzk.wx.redis.RedisComponent;
+import com.dzk.wx.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
