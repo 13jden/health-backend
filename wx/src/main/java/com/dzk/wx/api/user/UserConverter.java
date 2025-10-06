@@ -32,7 +32,6 @@ public class UserConverter {
         
         User user = new User();
         user.setUsername(input.getUsername());
-        user.setOpenId(input.getOpenId());
         user.setAvatar(input.getAvatar());
         user.setPassword(input.getPassword());
         user.setPhone(input.getPhone());

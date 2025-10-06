@@ -3,8 +3,11 @@ package com.dzk.wx.api.user;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dzk.common.exception.BusinessException;
 import com.dzk.wx.redis.RedisComponent;
+import com.dzk.wx.utils.SecurityUtil;
 import com.dzk.wx.utils.WxLoginTool;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,9 +22,15 @@ public class UserService  extends ServiceImpl<UserMapper, User> {
 
     @Autowired
     private WxLoginTool wxLoginTool;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     
     @Autowired
     private RedisComponent redisComponent;
+
+    @Value("default.Password")
+    private String defaultPassword;
 
     
     public User saveUser(User user) {
@@ -47,6 +56,7 @@ public class UserService  extends ServiceImpl<UserMapper, User> {
         String openId = wxLoginTool.wxLogin(input.getCode());
         user.setRole(RoleEnum.USER);
         user.setOpenId(openId);
+        user.setPassword(passwordEncoder.encode(defaultPassword));
         userMapper.insert(user);
         return "注册成功！";
     }
