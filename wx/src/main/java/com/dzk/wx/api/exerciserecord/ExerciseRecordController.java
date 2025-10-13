@@ -93,3 +93,4 @@ public class ExerciseRecordController {
         return Result.success("删除成功");
     }
 }
+

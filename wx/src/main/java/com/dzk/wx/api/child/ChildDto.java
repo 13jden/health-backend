@@ -1,5 +1,9 @@
 package com.dzk.wx.api.child;
 
+import java.util.List;
+
+import com.dzk.wx.api.growthrecord.GrowthRecordDto;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import java.math.BigDecimal;
@@ -108,5 +112,17 @@ public class ChildDto {
         
         @Schema(description = "更新时间")
         private String updateTime;
+    }
+
+        @Data
+    @Schema(description = "儿童基础信息(模型对话使用)")
+    public static class Base {
+        @Schema(description = "儿童信息")
+        private ChildDto child;
+
+        @Schema(description = "最近生长数据")
+        private List<GrowthRecordDto> growthRecord;
+        
+
     }
 } 
