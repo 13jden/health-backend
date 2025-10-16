@@ -22,13 +22,13 @@ public class ChatRequest {
     @Schema(description = "附件信息")
     private List<File> attachments;
 
+    @Data
     public static class Memory {
-        @Schema(description = "用户问题")
+        @Schema(description = "角色")
+        private String role;
+
+        @Schema(description = "内容")
         private String content;
-
-        @Schema(description = "模型回复内容")
-        private String reply;
     }
-
 
 }

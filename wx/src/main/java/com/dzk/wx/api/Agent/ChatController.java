@@ -1,11 +1,7 @@
 package com.dzk.wx.api.Agent;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
 @RestController
@@ -14,7 +10,7 @@ public class ChatController {
     @Autowired
     private ChatService chatService;
 
-    @GetMapping("/stream/{type}")
+    @PostMapping("/stream/{type}")
     public Flux<String> stream(@PathVariable String type, @RequestBody ChatRequest request) {
         return chatService.streamChat(type, request);
     }
