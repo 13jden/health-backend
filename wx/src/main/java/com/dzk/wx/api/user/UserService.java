@@ -52,12 +52,22 @@ public class UserService  extends ServiceImpl<UserMapper, User> {
     }
 
     public String register(UserDto.Input input){
-        User user = userConverter.toEntity(input);
-        String openId = wxLoginTool.wxLogin(input.getCode());
-        user.setRole(RoleEnum.USER);
-        user.setOpenId(openId);
-        user.setPassword(passwordEncoder.encode(defaultPassword));
-        userMapper.insert(user);
-        return "注册成功！";
+        try {
+            User user = userConverter.toEntity(input);
+            String openId = wxLoginTool.wxLogin(input.getCode());
+            if (openId == null) {
+                throw new BusinessException("微信登录失败，请重试");
+            }
+            if(userMapper.getUserByOpenId(openId)!=null){
+                throw new BusinessException( "账号已注册，请退出直接登录");
+            }
+            user.setRole(RoleEnum.USER);
+            user.setOpenId(openId);
+            user.setPassword(passwordEncoder.encode(defaultPassword));
+            userMapper.insert(user);
+            return "注册成功！";
+        } catch (RuntimeException e) {
+            throw new BusinessException("注册失败: " + e.getMessage());
+        }
     }
 }

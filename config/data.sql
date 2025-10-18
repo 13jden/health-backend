@@ -1,12 +1,14 @@
 -- 建表脚本（已修正语法）
 CREATE TABLE `user` (
   `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
-  `username` VARCHAR(255) NOT NULL,
-  `password` VARCHAR(255) NOT NULL,
-  `phone` VARCHAR(20) NOT NULL,
-  `email` VARCHAR(255),
-  `department` VARCHAR(15),
+  `username` VARCHAR(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` VARCHAR(50) NOT NULL,
+  `phone` VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `department` VARCHAR(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `role` ENUM('ADMIN','USER','DOCTER'),
+  `open_id` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '微信openId',
+  `avatar` VARCHAR(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '头像URL',
   `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -15,7 +17,7 @@ CREATE TABLE `user` (
 CREATE TABLE `child` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `parent_id` bigint(20) DEFAULT NULL,
-  `name` varchar(255) NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `gender` enum('男','女') NOT NULL,
   `birthdate` date NOT NULL,
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -64,9 +66,9 @@ CREATE TABLE `appointment` (
 
 CREATE TABLE `health_article` (
   `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
-  `title` VARCHAR(255) NOT NULL,
-  `content` TEXT NOT NULL,
-  `author` VARCHAR(255) NOT NULL,
+  `title` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `content` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `author` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `publish_date` DATE NOT NULL,
   `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -75,25 +77,25 @@ CREATE TABLE `health_article` (
 CREATE TABLE `feedback` (
   `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
   `parent_id` BIGINT,
-  `content` TEXT NOT NULL,
-  `reply` TEXT,
+  `content` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `reply` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `log` (
   `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
-  `action` VARCHAR(255) NOT NULL,
+  `action` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `user_id` BIGINT NOT NULL,
   `action_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `details` TEXT
+  `details` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `message` (
   `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
   `receiver_id` BIGINT NOT NULL,
   `receiver_role` ENUM('USER','DOCTER','ADMIN') NOT NULL,
-  `message` TEXT NOT NULL,
+  `message` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `status` ENUM('UNREAD','READED') DEFAULT 'UNREAD',
   `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -102,7 +104,7 @@ CREATE TABLE `notification` (
   `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
   `receiver_id` BIGINT NOT NULL,
   `receiver_role` ENUM('USER','DOCTER','ADMIN') NOT NULL,
-  `message` TEXT NOT NULL,
+  `message` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `status` ENUM('UNREAD','READED') DEFAULT 'UNREAD',
   `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -112,10 +114,10 @@ CREATE TABLE `diet_record` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `child_id` bigint(20) NOT NULL,
   `meal_type` enum('早餐','午餐','晚餐','加餐','零食') NOT NULL COMMENT '餐次类型',
-  `food_name` varchar(255) NOT NULL COMMENT '食物名称',
-  `food_category` varchar(50) DEFAULT NULL COMMENT '食物分类',
+  `food_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '食物名称',
+  `food_category` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '食物分类',
   `quantity` decimal(8,2) NOT NULL COMMENT '食物分量',
-  `unit` varchar(20) NOT NULL COMMENT '单位（克、毫升、个等）',
+  `unit` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '单位（克、毫升、个等）',
   `calories` decimal(8,2) DEFAULT NULL COMMENT '热量（卡路里）',
   `protein` decimal(8,2) DEFAULT NULL COMMENT '蛋白质（克）',
   `carbohydrate` decimal(8,2) DEFAULT NULL COMMENT '碳水化合物（克）',
@@ -123,7 +125,7 @@ CREATE TABLE `diet_record` (
   `fiber` decimal(8,2) DEFAULT NULL COMMENT '膳食纤维（克）',
   `record_date` date NOT NULL COMMENT '记录日期',
   `record_time` time DEFAULT NULL COMMENT '记录时间',
-  `notes` text COMMENT '备注',
+  `notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT '备注',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -137,8 +139,8 @@ CREATE TABLE `diet_record` (
 CREATE TABLE `exercise_record` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `child_id` bigint(20) NOT NULL,
-  `exercise_type` varchar(100) NOT NULL COMMENT '运动类型',
-  `exercise_category` varchar(50) DEFAULT NULL COMMENT '运动分类（有氧、力量、柔韧性等）',
+  `exercise_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '运动类型',
+  `exercise_category` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '运动分类（有氧、力量、柔韧性等）',
   `duration` int(11) NOT NULL COMMENT '运动时长（分钟）',
   `intensity` enum('低','中','高') DEFAULT '中' COMMENT '运动强度',
   `calories_burned` decimal(8,2) DEFAULT NULL COMMENT '消耗热量（卡路里）',
@@ -149,7 +151,7 @@ CREATE TABLE `exercise_record` (
   `record_date` date NOT NULL COMMENT '记录日期',
   `start_time` time DEFAULT NULL COMMENT '开始时间',
   `end_time` time DEFAULT NULL COMMENT '结束时间',
-  `notes` text COMMENT '备注',
+  `notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT '备注',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),

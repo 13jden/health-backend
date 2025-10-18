@@ -13,8 +13,8 @@ import java.util.Map;
 public class WxLoginTool {
 
     // 微信小程序的 AppID 和 AppSecret
-    private static final String APP_ID = "wxccc1876e11e76695";
-    private static final String APP_SECRET = "cbcf33c4daa8c26db996ef1070dda85d";
+    private static final String APP_ID = "wxea2c9a89a48c6452";
+    private static final String APP_SECRET = "8f10664c620ab8d908aae62080c87c45";
 
     // 微信登录接口地址
     private static final String WX_LOGIN_URL = "https://api.weixin.qq.com/sns/jscode2session";
@@ -49,12 +49,20 @@ public class WxLoginTool {
                 ObjectMapper objectMapper = new ObjectMapper();
                 Map<String, Object> responseMap = objectMapper.readValue(responseBody, Map.class);
 
+                // 检查是否有错误
+                if (responseMap.containsKey("errcode")) {
+                    Integer errcode = (Integer) responseMap.get("errcode");
+                    String errmsg = (String) responseMap.get("errmsg");
+                    System.out.println("微信登录错误: errcode=" + errcode + ", errmsg=" + errmsg);
+                    throw new RuntimeException("微信登录失败: " + errmsg);
+                }
+                
                 // 提取 openid
                 String openid = (String) responseMap.get("openid");
                 if (openid != null) {
                     return openid; // 返回 openid
                 } else {
-                    return "登录失败请稍后再试";
+                    throw new RuntimeException("微信登录失败：未获取到openid");
                 }
             } else {
                 System.out.println("请求微信服务器失败，状态码: " + response.code());
