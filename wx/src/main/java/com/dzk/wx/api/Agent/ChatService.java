@@ -143,12 +143,6 @@ public class ChatService {
                     .map(result -> {
                         ApplicationOutput output = result.getOutput();
                         if (output != null) {
-                            // 优先获取直接的文本输出（最终结果）
-                            if (output.getText() != null && !output.getText().isEmpty()) {
-                                System.out.println("输出文本: " + output.getText());
-                                return output.getText();
-                            }
-                            
                             // 流式过程中从"智能咨询"节点提取文本
                             if (output.getThoughts() != null) {
                                 for (ApplicationOutput.Thought thought : output.getThoughts()) {
@@ -184,6 +178,7 @@ public class ChatService {
                         }
                         return "";
                     })
+                    .filter(s -> s != null && !s.isEmpty())
                     .doOnError(error -> System.err.println("流处理错误: " + error.getMessage()))
                     .doOnComplete(() -> System.out.println("流处理完成"));
         } catch (Exception e) {
