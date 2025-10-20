@@ -2,10 +2,14 @@ package com.dzk.wx.api.child;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dzk.common.exception.BusinessException;
+import com.dzk.wx.api.growthrecord.GrowthRecord;
+import com.dzk.wx.api.growthrecord.GrowthRecordMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +22,9 @@ public class ChildService extends ServiceImpl<ChildMapper, Child> {
     @Autowired
     private ChildConverter childConverter;
 
+    @Autowired
+    private GrowthRecordMapper growthRecordMapper;
+
     /**
      * 添加儿童信息
      */
@@ -29,6 +36,35 @@ public class ChildService extends ServiceImpl<ChildMapper, Child> {
             Child savedChild = childMapper.getChildById(child.getId());
             return childConverter.toDetail(savedChild);
         }
+        BigDecimal height = input.getHeight();
+        BigDecimal weight = input.getWeight();
+        BigDecimal bmi = input.getBmi();
+        BigDecimal boneAge = input.getBoneAge();
+        LocalDate testDate = input.getTestDate();
+        if(height!=null){
+            child.setHeight(height);
+        }
+        if(weight!=null){
+            child.setWeight(weight);
+        }
+        if(bmi!=null){
+            child.setBmi(bmi);
+        }
+        if(boneAge!=null){
+            child.setBoneAge(boneAge);
+        }
+        if(testDate!=null){
+            child.setTestDate(testDate);
+            GrowthRecord growthRecord = new GrowthRecord();
+            growthRecord.setChildId(child.getId());
+            growthRecord.setHeight(height);
+            growthRecord.setWeight(weight);
+            growthRecord.setBmi(bmi);
+            growthRecord.setBoneAge(boneAge);
+            growthRecord.setTestDate(testDate);
+            growthRecordMapper.insert(growthRecord);
+        }
+
         throw new BusinessException("添加儿童信息失败");
     }
 

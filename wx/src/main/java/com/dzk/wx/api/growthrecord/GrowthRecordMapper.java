@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Mapper
@@ -21,4 +22,7 @@ public interface GrowthRecordMapper extends BaseMapper<GrowthRecord> {
     
     @Select("SELECT * FROM growth_record WHERE child_id = #{childId} ORDER BY test_date DESC LIMIT #{limit}")
     List<GrowthRecord> getLatestRecordsByChildId(@Param("childId") Long childId, @Param("limit") Integer limit);
+
+    @Select("SELECT test_date FROM growth_record WHERE child_id = #{childId} ORDER BY test_date DESC LIMIT 1")
+    LocalDate getLastTestDate(@Param("childId") Long childId);
 }

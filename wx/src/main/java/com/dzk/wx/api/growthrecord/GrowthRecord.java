@@ -1,6 +1,7 @@
 package com.dzk.wx.api.growthrecord;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.dzk.common.common.BaseEntity;
@@ -17,6 +18,7 @@ public class GrowthRecord extends BaseEntity {
     @Schema(description = "记录ID")
     private Long id;
 
+    @TableField("child_id")
     @Schema(description = "儿童ID")
     private Long childId;
 
@@ -26,12 +28,15 @@ public class GrowthRecord extends BaseEntity {
     @Schema(description = "体重(kg)")
     private BigDecimal weight;
 
+    @TableField("bmi")
     @Schema(description = "BMI指数")
     private BigDecimal bmi;
 
+    @TableField("bone_age")
     @Schema(description = "骨龄")
     private BigDecimal boneAge;
 
+    @TableField("test_date")
     @Schema(description = "检测日期")
     private LocalDate testDate;
 }

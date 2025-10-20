@@ -2,11 +2,14 @@ package com.dzk.wx.api.growthrecord;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.dzk.wx.api.child.Child;
+import com.dzk.wx.api.child.ChildMapper;
 import com.dzk.wx.api.dietrecord.DietRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,17 +22,35 @@ public class GrowthRecordService extends ServiceImpl<GrowthRecordMapper, GrowthR
     @Autowired
     private GrowthRecordConverter growthRecordConverter;
 
+    @Autowired
+    private ChildMapper childMapper;
+
     /**
      * 添加生长记录
      */
     @Transactional
     public GrowthRecordDto.Detail addRecord(GrowthRecordDto.Input input) {
         GrowthRecord record = growthRecordConverter.toEntity(input);
+        Long childId = input.getChildId();
+        //查询最近一次的测试时间
+        LocalDate lastTestDate = growthRecordMapper.getLastTestDate(childId);
+        if(lastTestDate==null || lastTestDate.isBefore(input.getTestDate())){//更新child的身高、体重、BMI、骨龄
+            Child child = childMapper.getChildById(childId);
+            if(child!=null){
+                child.setHeight(input.getHeight());
+                child.setWeight(input.getWeight());
+                child.setBmi(input.getBmi());
+                child.setBoneAge(input.getBoneAge());
+                child.setTestDate(input.getTestDate());
+            }
+        }
+
         int result = growthRecordMapper.insert(record);
         if (result > 0) {
             GrowthRecord savedRecord = growthRecordMapper.getRecordById(record.getId());
             return growthRecordConverter.toDetail(savedRecord);
         }
+        
         throw new RuntimeException("添加生长记录失败");
     }
 
@@ -81,7 +102,18 @@ public class GrowthRecordService extends ServiceImpl<GrowthRecordMapper, GrowthR
         existingRecord.setBmi(input.getBmi());
         existingRecord.setBoneAge(input.getBoneAge());
         existingRecord.setTestDate(input.getTestDate());
-
+        //查询最近一次的测试时间
+        LocalDate lastTestDate = growthRecordMapper.getLastTestDate(existingRecord.getChildId());
+        if(lastTestDate==input.getTestDate() || lastTestDate.isBefore(input.getTestDate())){//更新child的身高、体重、BMI、骨龄
+            Child child = childMapper.getChildById(existingRecord.getChildId());
+            if(child!=null){
+                child.setHeight(input.getHeight());
+                child.setWeight(input.getWeight());
+                child.setBmi(input.getBmi());
+                child.setBoneAge(input.getBoneAge());
+                child.setTestDate(input.getTestDate());
+            }
+        }
         int result = growthRecordMapper.updateById(existingRecord);
         if (result > 0) {
             GrowthRecord updatedRecord = growthRecordMapper.getRecordById(id);
