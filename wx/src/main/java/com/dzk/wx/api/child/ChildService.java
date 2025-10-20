@@ -3,6 +3,8 @@ package com.dzk.wx.api.child;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dzk.common.exception.BusinessException;
 import com.dzk.wx.api.growthrecord.GrowthRecord;
+import com.dzk.wx.api.growthrecord.GrowthRecordConverter;
+import com.dzk.wx.api.growthrecord.GrowthRecordDto;
 import com.dzk.wx.api.growthrecord.GrowthRecordMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +27,9 @@ public class ChildService extends ServiceImpl<ChildMapper, Child> {
 
     @Autowired
     private GrowthRecordMapper growthRecordMapper;
+
+    @Autowired
+    private GrowthRecordConverter growthRecordConverter;
 
     /**
      * 添加儿童信息
@@ -133,4 +139,17 @@ public class ChildService extends ServiceImpl<ChildMapper, Child> {
             throw new BusinessException("删除儿童信息失败");
         }
     }
-} 
+
+    public ChildDto.Base getChildBase(Long childId){
+        Child child = childMapper.getChildById(childId);
+        List<GrowthRecord> growthRecords = growthRecordMapper.getRecordsByChildId(childId);
+        List<GrowthRecordDto> growthRecordDtos = new ArrayList<>();
+        for (GrowthRecord growthRecord : growthRecords){
+            growthRecordDtos.add(growthRecordConverter.toDto(growthRecord));
+        }
+        return ChildDto.Base.builder()
+                .child(childConverter.toDetail(child))
+                .growthRecord(growthRecordDtos)
+                .build();
+    }
+}

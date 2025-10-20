@@ -5,6 +5,7 @@ import java.util.List;
 import com.dzk.wx.api.growthrecord.GrowthRecordDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -114,11 +115,12 @@ public class ChildDto {
         private String updateTime;
     }
 
-        @Data
+    @Data
     @Schema(description = "儿童基础信息(模型对话使用)")
+    @Builder
     public static class Base {
         @Schema(description = "儿童信息")
-        private ChildDto child;
+        private ChildDto.Detail child;
 
         @Schema(description = "最近生长数据")
         private List<GrowthRecordDto> growthRecord;

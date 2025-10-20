@@ -6,6 +6,8 @@ import com.alibaba.dashscope.app.ApplicationParam;
 import com.alibaba.dashscope.app.ApplicationResult;
 import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
+import com.dzk.wx.api.child.ChildDto;
+import com.dzk.wx.api.child.ChildService;
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
@@ -32,6 +34,9 @@ public class ChatService {
      
      @Autowired
      private Gson gson;
+
+     @Autowired
+     private ChildService childService;
      
      // 创建支持 LocalDate 和 File 的 Gson 实例
      private static Gson createGsonWithLocalDateSupport() {
@@ -85,7 +90,12 @@ public class ChatService {
         try {
             System.out.println("开始处理聊天请求，type: " + type);
             System.out.println("请求内容: " + (request != null ? request.getContent() : "null"));
-            
+            //获取关联儿童信息
+            ChildDto.Base childBase=null;
+            if(request.getChildId()!=null){
+                childBase =  childService.getChildBase(request.getChildId());
+                request.setChildBaseInfo(childBase);
+            }
             Map<String, String> bizParamMap = new HashMap<>();
             // 将请求对象序列化为 JSON 字符串放入 content，若为空则放空字符串
             // 使用支持 LocalDate 的 Gson 实例
@@ -94,6 +104,7 @@ public class ChatService {
             String typeValue = type != null ? type : "";
             bizParamMap.put("type", typeValue);
             bizParamMap.put("content", contentJson);
+
 
             System.out.println("业务参数: " + bizParamMap);
 

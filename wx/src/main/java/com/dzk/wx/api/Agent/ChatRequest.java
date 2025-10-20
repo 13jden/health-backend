@@ -22,6 +22,9 @@ public class ChatRequest {
     @Schema(description = "附件信息")
     private List<File> attachments;
 
+    @Schema(description = "相关儿童id")
+    private Long childId;
+
     @Data
     public static class Memory {
         @Schema(description = "角色")
