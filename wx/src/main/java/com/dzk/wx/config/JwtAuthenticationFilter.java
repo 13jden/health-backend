@@ -48,7 +48,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     User user = new User();
                     user.setId(tokenUserDto.getId());
                     user.setUsername(tokenUserDto.getUsername());
-                    user.setAvatar(tokenUserDto.getAvatar());
                     // 创建认证对象，存储完整的用户信息
                     UsernamePasswordAuthenticationToken authentication = 
                         new UsernamePasswordAuthenticationToken(

@@ -17,7 +17,7 @@ public class UserConverter {
         userDto.setId(user.getId());
         userDto.setUsername(user.getUsername());
         userDto.setOpenId(user.getOpenId());
-        userDto.setAvatar(user.getAvatar());
+        // userDto.setAvatar(user.getAvatar());
         userDto.setRole(user.getRole());
         return userDto;
     }
@@ -32,7 +32,7 @@ public class UserConverter {
         
         User user = new User();
         user.setUsername(input.getUsername());
-        user.setAvatar(input.getAvatar());
+        // user.setAvatar(input.getAvatar());
         user.setPassword(input.getPassword());
         user.setPhone(input.getPhone());
         return user;

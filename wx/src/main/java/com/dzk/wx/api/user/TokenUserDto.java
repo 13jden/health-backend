@@ -44,7 +44,7 @@ public class TokenUserDto {
             .username(user.getUsername())
             .password(user.getPassword())
             .role(user.getRole())
-            .avatar(user.getAvatar())
+//            .avatar(user.getAvatar())
             .phone(user.getPhone())
             .token(token)
             .build();

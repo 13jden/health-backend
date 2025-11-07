@@ -22,8 +22,8 @@ public class User extends BaseEntity {
   @Schema(description = "openId")
   private String openId;
 
-  @Schema(description = "头像")
-  private String avatar;
+  // @Schema(description = "头像")
+  // private String avatar;
 
   @Schema(description = "电话号码")
   private String phone;
