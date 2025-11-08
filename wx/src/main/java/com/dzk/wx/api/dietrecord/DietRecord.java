@@ -1,8 +1,10 @@
 package com.dzk.wx.api.dietrecord;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.dzk.common.common.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -10,6 +12,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Data
 @TableName("diet_record")
@@ -18,6 +21,10 @@ public class DietRecord extends BaseEntity {
     @TableId(type = IdType.AUTO)
     @Schema(description = "饮食记录ID")
     private Long id;
+
+    @TableField(value = "image_list", typeHandler = JacksonTypeHandler.class)
+    @Schema(description = "图片URL列表")
+    private List<String> imageList;
 
     @Schema(description = "儿童ID")
     private Long childId;

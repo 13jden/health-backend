@@ -1,13 +1,17 @@
 package com.dzk.wx.api.dietrecord;
 
 import com.dzk.common.common.Result;
+import com.dzk.wx.util.FileUploadUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -18,6 +22,32 @@ public class DietRecordController {
     @Autowired
     private DietRecordService dietRecordService;
 
+    @Autowired
+    private FileUploadUtil fileUploadUtil;
+
+    @PostMapping("/upload")
+    @Operation(summary = "上传饮食图片", description = "上传饮食图片到服务器，返回图片URL")
+    public Result<String> uploadImage(
+            @RequestParam(value = "image", required = true) MultipartFile image) {
+        try {
+            String imageUrl = fileUploadUtil.uploadDietImage(image);
+            return Result.success(imageUrl);
+        } catch (IOException e) {
+            return Result.error("上传图片失败: " + e.getMessage());
+        }
+    }
+
+
+    @PostMapping("/{childId}")
+    @Operation(summary = "快速（图片URL）添加饮食记录", description = "根据儿童ID和图片URL列表快速添加饮食记录")
+    public Result<DietRecordDto.Detail> addQuickRecordByUrls(
+            @PathVariable Long childId,
+            @RequestParam(value = "imageList", required = true) List<String> imageList,
+            @RequestParam(value = "mealType", required = false) String mealType,
+            @RequestParam(value = "recordDate", required = false) LocalDate recordDate) {
+        DietRecordDto.Detail detail = dietRecordService.addQuickRecordByUrls(childId, imageList, mealType, recordDate);
+        return Result.success(detail);
+    }
     @PostMapping
     @Operation(summary = "添加饮食记录", description = "为儿童添加新的饮食记录")
     public Result<DietRecordDto.Detail> addRecord(@RequestBody DietRecordDto.Input input) {

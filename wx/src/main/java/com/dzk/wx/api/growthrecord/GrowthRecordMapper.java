@@ -14,6 +14,9 @@ public interface GrowthRecordMapper extends BaseMapper<GrowthRecord> {
     @Select("SELECT * FROM growth_record WHERE child_id = #{childId} ORDER BY test_date DESC")
     List<GrowthRecord> getRecordsByChildId(@Param("childId") Long childId);
     
+    @Select("SELECT * FROM growth_record WHERE child_id = #{childId} ORDER BY test_date DESC LIMIT 1")
+    GrowthRecord getRecordByChildId(@Param("childId") Long childId);
+
     @Select("SELECT * FROM growth_record WHERE id = #{id}")
     GrowthRecord getRecordById(@Param("id") Long id);
     

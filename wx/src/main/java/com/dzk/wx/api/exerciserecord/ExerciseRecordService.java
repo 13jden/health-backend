@@ -2,7 +2,11 @@ package com.dzk.wx.api.exerciserecord;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.dzk.wx.api.dietrecord.DietRecord;
+import com.dzk.common.exception.BusinessException;
+import com.dzk.wx.api.exerciserecord.ai.ExerciseAgentTool;
+import com.dzk.wx.api.growthrecord.GrowthRecord;
+import com.dzk.wx.api.growthrecord.GrowthRecordMapper;
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +22,46 @@ public class ExerciseRecordService extends ServiceImpl<ExerciseRecordMapper, Exe
     private ExerciseRecordMapper exerciseRecordMapper;
 
     @Autowired
+    private GrowthRecordMapper growthRecordMapper;
+
+    @Autowired
     private ExerciseRecordConverter exerciseRecordConverter;
+
+    @Autowired
+    private ExerciseAgentTool exerciseAgentTool;
+
+    @Autowired
+    private Gson gson;
+
+
+    /**
+     * 快速ai识别content添加运动记录
+     */
+    public ExerciseRecordDto.Detail addQuickRecord(ExerciseRecordDto.QuickInput input) {
+       GrowthRecord record = growthRecordMapper.getRecordByChildId(input.getChildId());
+       if(record==null){
+        throw new BusinessException("成长记录不存在，请先添加体测记录");
+       }
+       Integer weight = record.getWeight().intValue();
+       String content = input.getContent();
+
+       // 调用AI识别
+       String jsonResult = exerciseAgentTool.recognizeExercise(content, weight);
+       
+       // 解析JSON为Input对象
+       ExerciseRecordDto.Input recordInput = gson.fromJson(jsonResult, ExerciseRecordDto.Input.class);
+       
+       // 设置childId和recordDate（如果未设置）
+       if (recordInput.getChildId() == null) {
+           recordInput.setChildId(input.getChildId());
+       }
+       if (recordInput.getRecordDate() == null) {
+           recordInput.setRecordDate(LocalDate.now());
+       }
+       
+       // 调用addRecord插入记录
+       return addRecord(recordInput);
+    }
 
     /**
      * 添加运动记录

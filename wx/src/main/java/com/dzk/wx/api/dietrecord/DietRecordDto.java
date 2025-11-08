@@ -2,10 +2,12 @@ package com.dzk.wx.api.dietrecord;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Data
 @Schema(description = "饮食记录数据传输对象")
@@ -55,6 +57,26 @@ public class DietRecordDto {
     
     @Schema(description = "备注")
     private String notes;
+    
+    @Schema(description = "图片URL列表")
+    private List<String> imageList;
+
+
+    @Data
+    @Schema(description = "饮食记录快速输入数据传输对象")
+    public static class QuickInput {
+        @Schema(description = "儿童ID")
+        private Long childId;
+        
+        @Schema(description = "餐次类型")
+        private String mealType;
+
+        @Schema(description = "图片")
+        private List<String> imageList;
+        
+        @Schema(description = "用餐时间")
+        private LocalDate recordDate;
+    }
 
     @Data
     @Schema(description = "饮食记录输入数据传输对象")
@@ -100,6 +122,9 @@ public class DietRecordDto {
         
         @Schema(description = "备注")
         private String notes;
+        
+        @Schema(description = "图片URL列表")
+        private List<String> imageList;
     }
 
     @Data
@@ -149,6 +174,9 @@ public class DietRecordDto {
         
         @Schema(description = "备注")
         private String notes;
+        
+        @Schema(description = "图片URL列表")
+        private List<String> imageList;
         
         @Schema(description = "创建时间")
         private String createTime;

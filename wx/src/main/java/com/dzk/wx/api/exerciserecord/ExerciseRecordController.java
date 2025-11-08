@@ -18,6 +18,19 @@ public class ExerciseRecordController {
     @Autowired
     private ExerciseRecordService exerciseRecordService;
 
+
+    @PostMapping("/{childId}")
+    @Operation(summary = "快速添加运动记录", description = "根据儿童ID和输入内容快速添加运动记录")
+    public Result<ExerciseRecordDto.Detail> addRecord(
+            @PathVariable Long childId, 
+            @RequestParam String content) {
+        ExerciseRecordDto.QuickInput input = new ExerciseRecordDto.QuickInput();
+        input.setChildId(childId);
+        input.setContent(content);
+        ExerciseRecordDto.Detail detail = exerciseRecordService.addQuickRecord(input);
+        return Result.success(detail);
+    }
+
     @PostMapping
     @Operation(summary = "添加运动记录", description = "为儿童添加新的运动记录")
     public Result<ExerciseRecordDto.Detail> addRecord(@RequestBody ExerciseRecordDto.Input input) {

@@ -2,10 +2,12 @@ package com.dzk.wx.api.dietrecord;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.dzk.wx.api.dietrecord.ai.DietAgentTool;
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +21,14 @@ public class DietRecordService extends ServiceImpl<DietRecordMapper, DietRecord>
     @Autowired
     private DietRecordConverter dietRecordConverter;
 
+    @Autowired
+    private DietAgentTool dietAgentTool;
+
+    @Autowired
+    private Gson gson;
+
+
+    
     /**
      * 添加饮食记录
      */
@@ -109,6 +119,7 @@ public class DietRecordService extends ServiceImpl<DietRecordMapper, DietRecord>
         existingRecord.setRecordDate(input.getRecordDate());
         existingRecord.setRecordTime(input.getRecordTime());
         existingRecord.setNotes(input.getNotes());
+        existingRecord.setImageList(input.getImageList());
 
         int result = dietRecordMapper.updateById(existingRecord);
         if (result > 0) {
@@ -145,6 +156,68 @@ public class DietRecordService extends ServiceImpl<DietRecordMapper, DietRecord>
         if (result < 0) {
             throw new RuntimeException("删除饮食记录失败");
         }
+    }
+
+    /**
+     * 快速AI识别图片添加饮食记录
+     */
+    @Transactional
+    public DietRecordDto.Detail addQuickRecord(Long childId, MultipartFile image, String mealType, LocalDate recordDate) {
+        if (image == null || image.isEmpty()) {
+            throw new RuntimeException("图片不能为空");
+        }
+
+        // 调用AI识别
+        String jsonResult = dietAgentTool.recognizeDiet(image, mealType, recordDate);
+        
+        // 解析JSON为Input对象
+        DietRecordDto.Input recordInput = gson.fromJson(jsonResult, DietRecordDto.Input.class);
+        
+        // 设置childId和recordDate（如果未设置）
+        if (recordInput.getChildId() == null) {
+            recordInput.setChildId(childId);
+        }
+        if (recordInput.getRecordDate() == null && recordDate != null) {
+            recordInput.setRecordDate(recordDate);
+        }
+        if (recordInput.getMealType() == null && mealType != null) {
+            recordInput.setMealType(mealType);
+        }
+        
+        // 调用addRecord插入记录
+        return addRecord(recordInput);
+    }
+
+    /**
+     * 通过图片URL列表快速AI识别添加饮食记录
+     */
+    @Transactional
+    public DietRecordDto.Detail addQuickRecordByUrls(Long childId, List<String> imageList, String mealType, LocalDate recordDate) {
+        if (imageList == null || imageList.isEmpty()) {
+            throw new RuntimeException("图片列表不能为空");
+        }
+
+        // 调用AI识别
+        String jsonResult = dietAgentTool.recognizeDietByUrls(imageList, mealType, recordDate);
+        
+        // 解析JSON为Input对象
+        DietRecordDto.Input recordInput = gson.fromJson(jsonResult, DietRecordDto.Input.class);
+        
+        // 设置childId和recordDate（如果未设置）
+        if (recordInput.getChildId() == null) {
+            recordInput.setChildId(childId);
+        }
+        if (recordInput.getRecordDate() == null && recordDate != null) {
+            recordInput.setRecordDate(recordDate);
+        }
+        if (recordInput.getMealType() == null && mealType != null) {
+            recordInput.setMealType(mealType);
+        }
+        // 设置图片列表
+        recordInput.setImageList(imageList);
+        
+        // 调用addRecord插入记录
+        return addRecord(recordInput);
     }
 }
 

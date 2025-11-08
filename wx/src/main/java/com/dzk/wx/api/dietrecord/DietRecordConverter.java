@@ -29,6 +29,7 @@ public class DietRecordConverter {
         dietRecordDto.setRecordDate(dietRecord.getRecordDate());
         dietRecordDto.setRecordTime(dietRecord.getRecordTime());
         dietRecordDto.setNotes(dietRecord.getNotes());
+        dietRecordDto.setImageList(dietRecord.getImageList());
         return dietRecordDto;
     }
     
@@ -55,6 +56,7 @@ public class DietRecordConverter {
         dietRecord.setRecordDate(input.getRecordDate());
         dietRecord.setRecordTime(input.getRecordTime());
         dietRecord.setNotes(input.getNotes());
+        dietRecord.setImageList(input.getImageList());
         return dietRecord;
     }
 
@@ -82,6 +84,7 @@ public class DietRecordConverter {
         detail.setRecordDate(dietRecord.getRecordDate());
         detail.setRecordTime(dietRecord.getRecordTime());
         detail.setNotes(dietRecord.getNotes());
+        detail.setImageList(dietRecord.getImageList());
         detail.setCreateTime(dietRecord.getCreateTime() != null ? dietRecord.getCreateTime().toString() : null);
         detail.setUpdateTime(dietRecord.getUpdateTime() != null ? dietRecord.getUpdateTime().toString() : null);
         return detail;

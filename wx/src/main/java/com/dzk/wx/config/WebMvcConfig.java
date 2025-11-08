@@ -20,11 +20,21 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Value("${upload.commonPath}")
     private String commonPath;
 
+    @Value("${file.diet.path}")
+    private String dietPath;
+
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // 映射通用文件路径
         registry.addResourceHandler("/files/**")
                 .addResourceLocations("file:" + commonPath);
+        
+        // 映射饮食图片路径（如果dietPath不在commonPath下）
+        // 确保路径以/结尾
+        String dietPathWithSlash = dietPath.endsWith("/") ? dietPath : dietPath + "/";
+        registry.addResourceHandler("/files/diet/**")
+                .addResourceLocations("file:" + dietPathWithSlash);
     }
 
     @Override

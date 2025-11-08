@@ -103,6 +103,16 @@ public class ExerciseRecordDto {
     }
 
     @Data
+    @Schema(description = "运动记录快速输入数据传输对象")
+    public static class QuickInput {
+        @Schema(description = "儿童ID")
+        private Long childId;
+
+        @Schema(description = "输入内容")
+        private String content;
+    }
+
+    @Data
     @Schema(description = "运动记录详情数据传输对象")
     public static class Detail {
         @Schema(description = "运动记录ID")

@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 @Configuration
@@ -34,6 +35,7 @@ public class DashScopeConfig {
     public Gson gson() {
         return new GsonBuilder()
                 .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                .registerTypeAdapter(LocalTime.class, new LocalTimeAdapter())
                 .registerTypeAdapter(File.class, new FileAdapter())
                 .create();
     }
@@ -57,6 +59,28 @@ public class DashScopeConfig {
                 return null;
             }
             return LocalDate.parse(in.nextString(), formatter);
+        }
+    }
+
+    private static class LocalTimeAdapter extends TypeAdapter<LocalTime> {
+        private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_TIME;
+
+        @Override
+        public void write(JsonWriter out, LocalTime value) throws IOException {
+            if (value == null) {
+                out.nullValue();
+            } else {
+                out.value(formatter.format(value));
+            }
+        }
+
+        @Override
+        public LocalTime read(JsonReader in) throws IOException {
+            if (in.peek() == com.google.gson.stream.JsonToken.NULL) {
+                in.nextNull();
+                return null;
+            }
+            return LocalTime.parse(in.nextString(), formatter);
         }
     }
 
