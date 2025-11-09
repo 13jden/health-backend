@@ -126,6 +126,7 @@ CREATE TABLE `diet_record` (
   `record_date` date NOT NULL COMMENT '记录日期',
   `record_time` time DEFAULT NULL COMMENT '记录时间',
   `notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT '备注',
+  `image_list` json DEFAULT NULL COMMENT '图片URL列表（JSON格式）',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),

@@ -55,10 +55,13 @@ jobs:
           script: |
             # 创建部署目录
             mkdir -p /opt/health-bankend
-
             # 设置目录权限
             chmod -R 755 /opt/health/files
-
+        
+            # 创建饮食文件目录
+            mkdir -p /opt/health/files/diet
+            chmod -R 755 /opt/health/files/diet
+            
             # 配置 SSH 密钥
             mkdir -p ~/.ssh
             chmod 700 ~/.ssh
