@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dzk.wx.api.dietrecord.ai.DietAgentTool;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +17,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class DietRecordService extends ServiceImpl<DietRecordMapper, DietRecord> {
+
+    private static final Logger logger = LoggerFactory.getLogger(DietRecordService.class);
 
     @Autowired
     private DietRecordMapper dietRecordMapper;
@@ -159,6 +164,56 @@ public class DietRecordService extends ServiceImpl<DietRecordMapper, DietRecord>
     }
 
     /**
+     * 解析AI返回的JSON字符串为Input对象
+     * 处理字符串化的JSON（转义的JSON字符串）和Markdown代码块
+     */
+    private DietRecordDto.Input parseJsonResult(String jsonResult) {
+        if (jsonResult == null || jsonResult.trim().isEmpty()) {
+            throw new RuntimeException("AI返回的JSON结果为空");
+        }
+        
+        logger.debug("解析AI返回的JSON: {}", jsonResult);
+        
+        // 清理Markdown代码块标记（```json 和 ```）
+        String cleanedJson = jsonResult.trim();
+        if (cleanedJson.startsWith("```")) {
+            // 移除开头的 ```json 或 ```
+            int startIndex = cleanedJson.indexOf("\n");
+            if (startIndex > 0) {
+                cleanedJson = cleanedJson.substring(startIndex + 1);
+            } else {
+                cleanedJson = cleanedJson.replaceFirst("```[a-zA-Z]*", "");
+            }
+        }
+        if (cleanedJson.endsWith("```")) {
+            // 移除结尾的 ```
+            cleanedJson = cleanedJson.substring(0, cleanedJson.lastIndexOf("```")).trim();
+        }
+        cleanedJson = cleanedJson.trim();
+        
+        logger.debug("清理后的JSON: {}", cleanedJson);
+        
+        // 先尝试直接解析为对象
+        try {
+            return gson.fromJson(cleanedJson, DietRecordDto.Input.class);
+        } catch (JsonSyntaxException e) {
+            logger.debug("直接解析失败，尝试解析为字符串化的JSON: {}", e.getMessage());
+            
+            // 如果直接解析失败，可能是字符串化的JSON（JSON字符串被转义在另一个字符串中）
+            try {
+                // 先解析为字符串（去除转义）
+                String unescapedJson = gson.fromJson(cleanedJson, String.class);
+                logger.debug("解析后的JSON字符串: {}", unescapedJson);
+                // 再解析为对象
+                return gson.fromJson(unescapedJson, DietRecordDto.Input.class);
+            } catch (Exception e2) {
+                logger.error("解析JSON失败，原始内容: {}", jsonResult, e2);
+                throw new RuntimeException("AI返回的JSON格式不正确: " + jsonResult + ", 错误: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    /**
      * 快速AI识别图片添加饮食记录
      */
     @Transactional
@@ -171,7 +226,7 @@ public class DietRecordService extends ServiceImpl<DietRecordMapper, DietRecord>
         String jsonResult = dietAgentTool.recognizeDiet(image, mealType, recordDate);
         
         // 解析JSON为Input对象
-        DietRecordDto.Input recordInput = gson.fromJson(jsonResult, DietRecordDto.Input.class);
+        DietRecordDto.Input recordInput = parseJsonResult(jsonResult);
         
         // 设置childId和recordDate（如果未设置）
         if (recordInput.getChildId() == null) {
@@ -201,7 +256,7 @@ public class DietRecordService extends ServiceImpl<DietRecordMapper, DietRecord>
         String jsonResult = dietAgentTool.recognizeDietByUrls(imageList, mealType, recordDate);
         
         // 解析JSON为Input对象
-        DietRecordDto.Input recordInput = gson.fromJson(jsonResult, DietRecordDto.Input.class);
+        DietRecordDto.Input recordInput = parseJsonResult(jsonResult);
         
         // 设置childId和recordDate（如果未设置）
         if (recordInput.getChildId() == null) {

@@ -42,10 +42,8 @@ public class DietRecordController {
     @Operation(summary = "快速（图片URL）添加饮食记录", description = "根据儿童ID和图片URL列表快速添加饮食记录")
     public Result<DietRecordDto.Detail> addQuickRecordByUrls(
             @PathVariable Long childId,
-            @RequestParam(value = "imageList", required = true) List<String> imageList,
-            @RequestParam(value = "mealType", required = false) String mealType,
-            @RequestParam(value = "recordDate", required = false) LocalDate recordDate) {
-        DietRecordDto.Detail detail = dietRecordService.addQuickRecordByUrls(childId, imageList, mealType, recordDate);
+            @RequestBody DietRecordDto.QuickInput quickInput) {
+        DietRecordDto.Detail detail = dietRecordService.addQuickRecordByUrls(childId, quickInput.getImageList(), quickInput.getMealType(), quickInput.getRecordDate());
         return Result.success(detail);
     }
     @PostMapping
