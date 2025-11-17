@@ -15,7 +15,8 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Data
-@TableName("diet_record")
+@TableName(value = "diet_record",autoResultMap = true)
+
 public class DietRecord extends BaseEntity {
 
     @TableId(type = IdType.AUTO)
