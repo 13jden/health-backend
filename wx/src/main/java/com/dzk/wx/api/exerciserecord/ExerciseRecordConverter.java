@@ -2,6 +2,9 @@ package com.dzk.wx.api.exerciserecord;
 
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 public class ExerciseRecordConverter {
     
@@ -85,5 +88,13 @@ public class ExerciseRecordConverter {
         detail.setCreateTime(exerciseRecord.getCreateTime() != null ? exerciseRecord.getCreateTime().toString() : null);
         detail.setUpdateTime(exerciseRecord.getUpdateTime() != null ? exerciseRecord.getUpdateTime().toString() : null);
         return detail;
+    }
+
+    public List<ExerciseRecordDto> toDtoList(List<ExerciseRecord> exerciseRecords) {
+        List<ExerciseRecordDto> exerciseRecordDtoList = new ArrayList<>();
+        for (ExerciseRecord exerciseRecord : exerciseRecords){
+            exerciseRecordDtoList.add(toDto(exerciseRecord));
+        }
+        return exerciseRecordDtoList;
     }
 }

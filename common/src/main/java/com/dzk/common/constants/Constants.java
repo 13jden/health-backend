@@ -14,6 +14,11 @@ public class Constants {
 
     public static final Integer LENGTH_10 = 10;
 
+    /**
+     * 用户生成报告，最低打卡次数
+     */
+    public static final Integer REPORT_LIMIT_COUNT = 10;
+
     public static final Integer REDIS_KEY_EXPIRES_ONE_DAY = 60000*60*24;
     public static final Integer REDIS_KEY_EXPIRES_SEVEN_DAYS = 60000*60*24*7;
 

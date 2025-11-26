@@ -1,6 +1,11 @@
 package com.dzk.wx.task;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.dzk.common.constants.Constants;
+import com.dzk.wx.api.report.GenerateReportService;
+import com.dzk.wx.api.child.Child;
+import com.dzk.wx.api.child.ChildMapper;
 import com.dzk.wx.api.user.User;
 import com.dzk.wx.api.user.UserMapper;
 import com.dzk.wx.utils.WxLoginTool;
@@ -8,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Component
@@ -18,6 +24,28 @@ public class NoticeTask {
 
     @Autowired
     private WxLoginTool wxLoginTool;
+
+    @Autowired
+    private GenerateReportService generateReportService;
+
+    @Autowired
+    private ChildMapper childMapper;
+
+
+    /**
+     * 每天两点，为15天内，打卡过的用户生成报告
+     */
+    @Scheduled(cron = "0 0 2 * * ?")
+    public void generateReport() {
+
+        List<Child> childs = childMapper.selectReportChild(Constants.REPORT_LIMIT_COUNT);
+        for (Child child:childs){
+            generateReportService.prepareReport(child.getId());
+        }
+        //todo 发送报告通知
+    }
+
+
 
     /**
      * 每天早上8点发送早餐饮食打卡提醒

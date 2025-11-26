@@ -2,6 +2,9 @@ package com.dzk.wx.api.dietrecord;
 
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 public class DietRecordConverter {
     
@@ -31,6 +34,14 @@ public class DietRecordConverter {
         dietRecordDto.setNotes(dietRecord.getNotes());
         dietRecordDto.setImageList(dietRecord.getImageList());
         return dietRecordDto;
+    }
+
+    public List<DietRecordDto> toDtoList(List<DietRecord> dietRecords){
+        List<DietRecordDto> dietRecordDtoList = new ArrayList<>();
+        for (DietRecord dietRecord : dietRecords){
+            dietRecordDtoList.add(toDto(dietRecord));
+        }
+        return dietRecordDtoList;
     }
     
     /**
