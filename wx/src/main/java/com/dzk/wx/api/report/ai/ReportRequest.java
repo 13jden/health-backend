@@ -1,4 +1,4 @@
-package com.dzk.wx.api.report;
+package com.dzk.wx.api.report.ai;
 
 import com.dzk.wx.api.child.ChildDto;
 import com.dzk.wx.api.dietrecord.DietRecordDto;

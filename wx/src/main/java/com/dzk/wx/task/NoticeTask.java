@@ -1,9 +1,8 @@
 package com.dzk.wx.task;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.dzk.common.constants.Constants;
-import com.dzk.wx.api.report.GenerateReportService;
+import com.dzk.wx.api.report.ai.GenerateReportService;
 import com.dzk.wx.api.child.Child;
 import com.dzk.wx.api.child.ChildMapper;
 import com.dzk.wx.api.user.User;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Component

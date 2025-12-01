@@ -1,4 +1,4 @@
-package com.dzk.wx.api.report;
+package com.dzk.wx.api.report.ai;
 
 import cn.hutool.json.JSONUtil;
 import com.alibaba.dashscope.app.Application;
@@ -71,6 +71,7 @@ public class GenerateReportService {
             ApplicationParam param = ApplicationParam.builder()
                     .apiKey(apiKey)
                     .appId(appId)
+                    .prompt("根据用户数据和规定格式生成报告")
                     .bizParams(bizParamJson)
                     .incrementalOutput(true)
                     .hasThoughts(true)
@@ -110,7 +111,7 @@ public class GenerateReportService {
         LocalDate fifteenDaysAgo = LocalDate.now().minusDays(15);
         LambdaQueryWrapper<DietRecord> dietRecordLambdaQueryWrapper = new LambdaQueryWrapper<>();
         dietRecordLambdaQueryWrapper
-                .eq(DietRecord::getChildId, child)
+                .eq(DietRecord::getChildId, childId)
                 .ge(DietRecord::getRecordTime, fifteenDaysAgo)
                 .orderByDesc(DietRecord::getRecordTime);
         List<DietRecordDto> dietRecordDtoList = dietRecordConverter.toDtoList(dietRecordMapper.selectList(dietRecordLambdaQueryWrapper)) ;

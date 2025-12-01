@@ -1,12 +1,10 @@
 package com.dzk.wx.api.report;
 
-
 import com.dzk.common.common.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -15,7 +13,8 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Report extends BaseEntity {
+public class ReportDto {
+
     private Long id;
 
     private Long childId;
@@ -23,4 +22,9 @@ public class Report extends BaseEntity {
     private String reportContent;
 
     private Date reportDate;
+
+    private Date createTime;
+
+    private Date updateTime;
+
 }
