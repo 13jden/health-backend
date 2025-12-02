@@ -13,6 +13,7 @@ public class WxLoginTool {
 
     // 微信小程序的 AppID 和 AppSecret
     private static final String APP_ID = "wxea2c9a89a48c6452";
+
     private static final String APP_SECRET = "8f10664c620ab8d908aae62080c87c45";
 
     // 微信登录接口地址
@@ -26,6 +27,9 @@ public class WxLoginTool {
     
     // 订阅消息模板ID
     private static final String TEMPLATE_ID = "4OFcdPl680DgcRzmHDs2Jh-DQCyYlkZ2vRfXZ3-ENCk";
+
+    //报告消息模板ID
+    private static final String REPORT_TEMPLATE_ID = "nDQJiv9HYI0zCTjMmikAkwNULb-HBuFrgXAun3EhyH0";
 
     // HTTP 客户端
     private final OkHttpClient httpClient = new OkHttpClient();
@@ -155,7 +159,7 @@ public class WxLoginTool {
             Map<String, Object> requestBody = new HashMap<>();
             requestBody.put("touser", openId);
             requestBody.put("template_id", TEMPLATE_ID);
-            requestBody.put("page", "pages/index/index"); // 点击消息后跳转的页面
+            requestBody.put("page", "pages/diet/diet"); // 点击消息后跳转的页面
             requestBody.put("miniprogram_state", "formal"); // 正式版
             requestBody.put("lang", "zh_CN"); // 中文
 
@@ -178,6 +182,92 @@ public class WxLoginTool {
             String jsonBody = objectMapper.writeValueAsString(requestBody);
             RequestBody body = RequestBody.create(jsonBody, MediaType.get("application/json; charset=utf-8"));
             
+            Request request = new Request.Builder()
+                    .url(url)
+                    .post(body)
+                    .build();
+
+            try (Response response = httpClient.newCall(request).execute()) {
+                if (response.isSuccessful() && response.body() != null) {
+                    String responseBody = response.body().string();
+                    System.out.println("发送订阅消息响应: " + responseBody);
+
+                    Map<String, Object> responseMap = objectMapper.readValue(responseBody, Map.class);
+
+                    // 检查是否有错误
+                    if (responseMap.containsKey("errcode")) {
+                        Integer errcode = (Integer) responseMap.get("errcode");
+                        String errmsg = (String) responseMap.get("errmsg");
+                        System.out.println("发送订阅消息错误: errcode=" + errcode + ", errmsg=" + errmsg);
+                        return false;
+                    }
+
+                    System.out.println("订阅消息发送成功，openId: " + openId);
+                    return true;
+                } else {
+                    System.out.println("发送订阅消息失败，状态码: " + response.code());
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("发送订阅消息时发生异常: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * 发送订阅消息给用户
+     *
+     * @param openId 用户的openId
+     * @return 是否发送成功
+     */
+    public boolean sendSubscribeReportMessage(String openId, String childName) {
+        String reportName = "健康报告";
+        String reportState = "已完成";
+        try {
+            // 获取access_token
+            String accessToken = getAccessToken();
+            if (accessToken == null) {
+                System.out.println("获取access_token失败，无法发送订阅消息");
+                return false;
+            }
+
+            // 构造请求URL
+            String url = String.format("%s?access_token=%s", WX_SUBSCRIBE_MESSAGE_URL, accessToken);
+
+            // 构造请求体
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("touser", openId);
+            requestBody.put("template_id", REPORT_TEMPLATE_ID);
+            requestBody.put("page", "pages/report/report"); // 点击消息后跳转的页面
+            requestBody.put("miniprogram_state", "formal"); // 正式版
+            requestBody.put("lang", "zh_CN"); // 中文
+
+            // 构造模板数据
+            Map<String, Object> data = new HashMap<>();
+
+            // 报告名称
+            Map<String, String> thing1 = new HashMap<>();
+            thing1.put("value", reportName);
+            data.put("thing1", thing1);
+
+            // 状态
+            Map<String, String> time7 = new HashMap<>();
+            time7.put("value", reportState);
+            data.put("phrase4", time7);
+
+            // 报告对象
+            Map<String, String> thing26 = new HashMap<>();
+            thing26.put("value", childName);
+            data.put("thing26", thing26);
+
+            requestBody.put("data", data);
+
+            // 发送请求
+            String jsonBody = objectMapper.writeValueAsString(requestBody);
+            RequestBody body = RequestBody.create(jsonBody, MediaType.get("application/json; charset=utf-8"));
+
             Request request = new Request.Builder()
                     .url(url)
                     .post(body)

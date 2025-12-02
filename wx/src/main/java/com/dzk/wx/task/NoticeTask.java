@@ -39,8 +39,10 @@ public class NoticeTask {
         List<Child> childs = childMapper.selectReportChild(Constants.REPORT_LIMIT_COUNT);
         for (Child child:childs){
             generateReportService.prepareReport(child.getId());
+            User user = userMapper.selectById(child.getParentId());
+            //todo 发送报告通知
+            wxLoginTool.sendSubscribeReportMessage(user.getOpenId(),child.getName());
         }
-        //todo 发送报告通知
     }
 
 
@@ -84,9 +86,7 @@ public class NoticeTask {
     private void sendReminderToAllUsers(String activityName, String timeRange) {
         try {
             // 查询所有用户
-            QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-            queryWrapper.isNotNull("open_id"); // 只查询有openId的用户
-            List<User> users = userMapper.selectList(queryWrapper);
+            List<User> users = userMapper.selectListBychild();
 
             if (users.isEmpty()) {
                 System.out.println("没有找到用户，跳过发送提醒");

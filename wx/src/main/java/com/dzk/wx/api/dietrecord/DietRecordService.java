@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -247,7 +249,7 @@ public class DietRecordService extends ServiceImpl<DietRecordMapper, DietRecord>
      * 通过图片URL列表快速AI识别添加饮食记录
      */
     @Transactional
-    public DietRecordDto.Detail addQuickRecordByUrls(Long childId, List<String> imageList, String mealType, LocalDate recordDate) {
+    public DietRecordDto.Detail addQuickRecordByUrls(Long childId, List<String> imageList, String mealType, LocalDate recordDate, LocalTime recordTime) {
         if (imageList == null || imageList.isEmpty()) {
             throw new RuntimeException("图片列表不能为空");
         }
@@ -257,7 +259,8 @@ public class DietRecordService extends ServiceImpl<DietRecordMapper, DietRecord>
         
         // 解析JSON为Input对象
         DietRecordDto.Input recordInput = parseJsonResult(jsonResult);
-        
+
+        recordInput.setRecordTime(recordTime);
         // 设置childId和recordDate（如果未设置）
         if (recordInput.getChildId() == null) {
             recordInput.setChildId(childId);

@@ -74,8 +74,11 @@ public class DietRecordDto {
         @Schema(description = "图片")
         private List<String> imageList;
         
-        @Schema(description = "用餐时间")
+        @Schema(description = "用餐日期")
         private LocalDate recordDate;
+
+        @Schema(description = "用餐时间")
+        private LocalTime recordTime;
     }
 
     @Data
