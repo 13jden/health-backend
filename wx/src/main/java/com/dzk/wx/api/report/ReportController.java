@@ -18,6 +18,7 @@ public class ReportController {
         return Result.success(reportService.generateReport(childId));
     }
 
+
     @GetMapping("list/{childId}")
     public Result<List<ReportDto>> getUserReport(@PathVariable Long childId){
         return Result.success(reportService.getUserReport(childId));
