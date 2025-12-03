@@ -78,7 +78,7 @@ jobs:
             # 克隆或更新代码仓库 - 使用SSH
             if [ -d "/opt/health-bankend/.git" ]; then
               cd /opt/health-bankend
-              git pull origin master
+              git pull origin main
             else
               git clone git@github.com:13jden/health-backend.git /opt/health-bankend
               cd /opt/health-bankend
