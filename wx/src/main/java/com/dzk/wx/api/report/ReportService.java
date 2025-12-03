@@ -1,6 +1,9 @@
 package com.dzk.wx.api.report;
 
 
+import com.dzk.common.exception.BusinessException;
+import com.dzk.wx.api.child.Child;
+import com.dzk.wx.api.child.ChildMapper;
 import com.dzk.wx.api.report.ai.GenerateReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,11 +22,18 @@ public class ReportService {
     private ReportMapper reportMapper;
 
     @Autowired
+    private ChildMapper childMapper;
+
+    @Autowired
     private GenerateReportService generateReportService;
 
 
     @Transactional
     public String generateReport(Long childId){
+        Child child = childMapper.getChildById(childId);
+        if(child==null){
+            throw new BusinessException("不存在患者");
+        }
         String reportMD = generateReportService.prepareReport(childId);
         Report report = new Report().builder()
                 .reportContent(reportMD)
