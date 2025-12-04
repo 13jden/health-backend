@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   health-app:
     image: crpi-aer4k3m8uw2sue3f.cn-hangzhou.personal.cr.aliyuncs.com/dzkdzk/health:latest
@@ -15,4 +13,4 @@ services:
       - ./logs:/app/logs
       - ./config:/app/config
       # 挂载文件上传目录
-      - /opt/travel/files:/opt/health/files
+      - /opt/health/files:/opt/health/files

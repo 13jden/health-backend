@@ -55,12 +55,10 @@ jobs:
           script: |
             # 创建部署目录
             mkdir -p /opt/health-bankend
-            # 设置目录权限
-            chmod -R 755 /opt/health/files
-        
-            # 创建饮食文件目录
+            
+            # 创建文件上传目录（确保目录存在）
             mkdir -p /opt/health/files/diet
-            chmod -R 755 /opt/health/files/diet
+            chmod -R 755 /opt/health/files
             
             # 配置 SSH 密钥
             mkdir -p ~/.ssh
@@ -90,12 +88,32 @@ jobs:
             # 拉取最新镜像
             docker pull crpi-aer4k3m8uw2sue3f.cn-hangzhou.personal.cr.aliyuncs.com/dzkdzk/health:latest
 
+            # 检查并升级 Docker Compose（如果需要）
+            # 如果 docker compose (V2) 不可用，尝试安装或升级
+            if ! docker compose version &> /dev/null; then
+              echo "Docker Compose V2 not found, checking docker-compose version..."
+              if docker-compose version &> /dev/null; then
+                DOCKER_COMPOSE_VERSION=$(docker-compose version --short 2>/dev/null | cut -d' ' -f3)
+                echo "Current docker-compose version: $DOCKER_COMPOSE_VERSION"
+                # 如果版本太旧，尝试升级（需要 sudo 权限）
+                if command -v sudo &> /dev/null; then
+                  echo "Attempting to upgrade docker-compose..."
+                  sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+                  sudo chmod +x /usr/local/bin/docker-compose
+                fi
+              fi
+            fi
+
             # 停止旧容器（如果存在）
             cd /opt/health-bankend
-            docker-compose down || true
-
-            # 启动新容器（只启动应用，MySQL和Redis保持运行）
-            docker-compose up -d
+            # 优先使用 docker compose (V2)，如果不存在则使用 docker-compose
+            if command -v docker &> /dev/null && docker compose version &> /dev/null; then
+              docker compose down || true
+              docker compose up -d
+            else
+              docker-compose down || true
+              docker-compose up -d
+            fi
 
             # 清理旧镜像
             docker image prune -f
