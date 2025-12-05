@@ -90,18 +90,31 @@ jobs:
             # 拉取最新镜像
             docker pull crpi-aer4k3m8uw2sue3f.cn-hangzhou.personal.cr.aliyuncs.com/dzkdzk/health:latest
 
-            # 升级 docker-compose（如果版本过旧）
-            sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose 2>/dev/null || true
-            sudo chmod +x /usr/local/bin/docker-compose 2>/dev/null || true
-
+            # 升级 docker-compose 到最新版本（解决版本过旧问题）
+            echo "检查并升级 docker-compose..."
+            COMPOSE_URL="https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)"
+            if sudo curl -L "$COMPOSE_URL" -o /usr/local/bin/docker-compose; then
+              sudo chmod +x /usr/local/bin/docker-compose
+              echo "docker-compose 升级成功: $(docker-compose --version 2>/dev/null || echo '版本未知')"
+            else
+              echo "docker-compose 升级失败，将尝试使用 docker compose V2"
+            fi
+            
             # 停止旧容器并启动新容器
             cd /opt/health-bankend
-            docker-compose down || true
             
-            # 确保文件目录存在（如果不存在才创建，不会删除已有文件）
-            mkdir -p /opt/health/files/diet
-            
-            docker-compose up -d
+            # 优先使用 docker compose V2，如果不可用则使用升级后的 docker-compose
+            if docker compose version &> /dev/null; then
+              echo "使用 docker compose V2"
+              docker compose down || true
+              mkdir -p /opt/health/files/diet
+              docker compose up -d
+            else
+              echo "使用 docker-compose"
+              docker-compose down || true
+              mkdir -p /opt/health/files/diet
+              docker-compose up -d
+            fi
             
             # 等待容器启动
             sleep 5
