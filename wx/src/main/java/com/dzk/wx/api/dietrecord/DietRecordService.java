@@ -3,8 +3,7 @@ package com.dzk.wx.api.dietrecord;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dzk.wx.api.dietrecord.ai.DietAgentTool;
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -195,23 +194,64 @@ public class DietRecordService extends ServiceImpl<DietRecordMapper, DietRecord>
         
         logger.debug("清理后的JSON: {}", cleanedJson);
         
-        // 先尝试直接解析为对象
+        // 如果是对象，先标准化数值字段（AI 可能返回逗号分隔的多个数值）
         try {
-            return gson.fromJson(cleanedJson, DietRecordDto.Input.class);
-        } catch (JsonSyntaxException e) {
-            logger.debug("直接解析失败，尝试解析为字符串化的JSON: {}", e.getMessage());
-            
-            // 如果直接解析失败，可能是字符串化的JSON（JSON字符串被转义在另一个字符串中）
-            try {
-                // 先解析为字符串（去除转义）
-                String unescapedJson = gson.fromJson(cleanedJson, String.class);
-                logger.debug("解析后的JSON字符串: {}", unescapedJson);
-                // 再解析为对象
-                return gson.fromJson(unescapedJson, DietRecordDto.Input.class);
-            } catch (Exception e2) {
-                logger.error("解析JSON失败，原始内容: {}", jsonResult, e2);
-                throw new RuntimeException("AI返回的JSON格式不正确: " + jsonResult + ", 错误: " + e.getMessage(), e);
+            JsonElement element = JsonParser.parseString(cleanedJson);
+            if (element.isJsonObject()) {
+                JsonObject obj = element.getAsJsonObject();
+                normalizeNumberField(obj, "quantity");
+                normalizeNumberField(obj, "calories");
+                normalizeNumberField(obj, "protein");
+                normalizeNumberField(obj, "carbohydrate");
+                normalizeNumberField(obj, "fat");
+                normalizeNumberField(obj, "fiber");
+                cleanedJson = gson.toJson(obj);
             }
+        } catch (Exception e) {
+            logger.warn("数值标准化时解析 JSON 失败，跳过标准化: {}", e.getMessage());
+        }
+
+        // 解析为 JsonElement，按类型处理
+        try {
+            JsonElement element = JsonParser.parseString(cleanedJson);
+            if (element.isJsonObject()) {
+                return gson.fromJson(element, DietRecordDto.Input.class);
+            }
+            if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isString()) {
+                String unescapedJson = element.getAsString();
+                logger.debug("解析到字符串形式的 JSON，继续反序列化: {}", unescapedJson);
+                return gson.fromJson(unescapedJson, DietRecordDto.Input.class);
+            }
+            logger.error("无法识别的 JSON 结构: {}", cleanedJson);
+            throw new RuntimeException("AI返回的JSON结构不正确: " + cleanedJson);
+        } catch (Exception e) {
+            logger.error("解析JSON失败，原始内容: {}", jsonResult, e);
+            throw new RuntimeException("AI返回的JSON格式不正确: " + jsonResult + ", 错误: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 将逗号分隔或包含多个数字的字符串，取第一个数字并写回对象
+     */
+    private void normalizeNumberField(JsonObject obj, String field) {
+        if (!obj.has(field) || obj.get(field).isJsonNull()) {
+            return;
+        }
+        try {
+            String raw = obj.get(field).getAsString();
+            if (raw == null || raw.isEmpty()) {
+                return;
+            }
+            // 按逗号分割，取第一段，并截取首个数字串
+            String firstPart = raw.split(",")[0].trim();
+            String number = firstPart.replaceAll("[^0-9.\\-]", "");
+            if (number.isEmpty()) {
+                return;
+            }
+            obj.addProperty(field, number);
+        } catch (Exception e) {
+            // 保持原值，避免影响其它字段
+            logger.warn("数值字段标准化失败: {}, error: {}", field, e.getMessage());
         }
     }
 
