@@ -43,7 +43,7 @@ public class DietRecordController {
     public Result<DietRecordDto.Detail> addQuickRecordByUrls(
             @PathVariable Long childId,
             @RequestBody DietRecordDto.QuickInput quickInput) {
-        DietRecordDto.Detail detail = dietRecordService.addQuickRecordByUrls(childId, quickInput.getImageList(), quickInput.getMealType(), quickInput.getRecordDate(),quickInput.getRecordTime());
+        DietRecordDto.Detail detail = dietRecordService.addQuickRecordByUrls(childId, quickInput.getImageList(), quickInput.getMealType(), quickInput.getRecordDate(),quickInput.getRecordTime(),quickInput.getPrompt());
         return Result.success(detail);
     }
     @PostMapping

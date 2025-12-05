@@ -79,6 +79,9 @@ public class DietRecordDto {
 
         @Schema(description = "用餐时间")
         private LocalTime recordTime;
+
+        @Schema(description = "用户备注")
+        private String prompt;
     }
 
     @Data

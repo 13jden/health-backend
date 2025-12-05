@@ -249,13 +249,13 @@ public class DietRecordService extends ServiceImpl<DietRecordMapper, DietRecord>
      * 通过图片URL列表快速AI识别添加饮食记录
      */
     @Transactional
-    public DietRecordDto.Detail addQuickRecordByUrls(Long childId, List<String> imageList, String mealType, LocalDate recordDate, LocalTime recordTime) {
+    public DietRecordDto.Detail addQuickRecordByUrls(Long childId, List<String> imageList, String mealType, LocalDate recordDate, LocalTime recordTime,String prompt) {
         if (imageList == null || imageList.isEmpty()) {
             throw new RuntimeException("图片列表不能为空");
         }
 
         // 调用AI识别
-        String jsonResult = dietAgentTool.recognizeDietByUrls(imageList, mealType, recordDate);
+        String jsonResult = dietAgentTool.recognizeDietByUrls(imageList, mealType, recordDate,prompt);
         
         // 解析JSON为Input对象
         DietRecordDto.Input recordInput = parseJsonResult(jsonResult);
@@ -267,6 +267,9 @@ public class DietRecordService extends ServiceImpl<DietRecordMapper, DietRecord>
         }
         if (recordInput.getRecordDate() == null && recordDate != null) {
             recordInput.setRecordDate(recordDate);
+        }
+        if(recordInput.getRecordTime()==null && recordTime!=null){
+            recordInput.setRecordTime(recordTime);
         }
         if (recordInput.getMealType() == null && mealType != null) {
             recordInput.setMealType(mealType);
